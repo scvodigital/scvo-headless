@@ -32,6 +32,17 @@ function post_published_parse_blocks( $ID, $post ) {
 
 add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
 
+function register_blocks_meta_box() {
+  add_meta_box( 'blocks-meta-box', 'Blocks JSON', 'display_blocks_meta_box', 'post' );
+}
+
+add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
+
+function display_blocks_meta_box( $post ) {
+  echo '<strong><em>TEST</em></strong>';
+}
+
+
 /*
 function post_published_webhook( $ID, $post ) {
   $metadata = get_post_meta($ID);
