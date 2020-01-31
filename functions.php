@@ -25,9 +25,9 @@ function curlArgs($r, $url) {
 }
 
 function post_published_parse_blocks( $ID, $post ) {
-  $parsed = parse_blocks( $post->post_content );
-  $json = json_encode( $parsed );
-  update_post_meta( $ID, 'blocks', wp_slash( $json ) );
+  //$parsed = parse_blocks( $post->post_content );
+  //$json = json_encode( $parsed );
+  //update_post_meta( $ID, 'blocks', wp_slash( $json ) );
 }
 
 add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
