@@ -45,7 +45,7 @@ function display_blocks_meta_box( $post ) {
   $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
   $escaped = htmlentities($prettified);
   echo "<textarea id='post-blocks-json' style='height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;'>$escaped</textarea>";
-  echo "<button type='button' class='btn' onclick='document.querySelector(\"#post-blocks-json\").select();document.execCommand(\"copy\");'>Copy</button>"
+  echo "<button type='button' class='btn' onclick='document.querySelector(\"#post-blocks-json\").select();document.execCommand(\"copy\");'>Copy</button>";
 }
 
 
