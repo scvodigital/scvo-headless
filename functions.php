@@ -16,40 +16,13 @@ require_once get_parent_theme_file_path( '/blocks/index.php' );
  * May need to wrap this in an `if` to only implement when on localhost
  */
 
-//add_filter( 'https_local_ssl_verify', '__return_false' );
-//add_filter( 'http_request_args', 'curlArgs', 10, 2 );
+add_filter( 'https_local_ssl_verify', '__return_false' );
+add_filter( 'http_request_args', 'curlArgs', 10, 2 );
 
 function curlArgs($r, $url) {
   $r['sslverify'] = false;
   return $r;
 }
-
-function post_published_parse_blocks( $ID, $post ) {
-  //$parsed = parse_blocks( $post->post_content );
-  //$json = json_encode( $parsed );
-  //update_post_meta( $ID, 'blocks', wp_slash( $json ) );
-}
-
-//add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
-
-function register_blocks_meta_box() {
-  add_meta_box( 'blocks-meta-box', 'Blocks JSON', 'display_blocks_meta_box', 'post' );
-}
-
-add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
-
-function display_blocks_meta_box( $post ) {
-  $json = get_post_meta( $post->ID, 'blocks', true );
-  $decoded = json_decode($json);
-  $unslashed = wp_unslash($decoded);
-  $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-  $escaped = htmlentities($prettified);
-  echo "<div style='text-align: right;'>";
-  echo "<button type='button' class='components-button is-button is-primary' onclick='document.querySelector(\"#post-blocks-json\").select();document.execCommand(\"copy\");'>Copy</button>";
-  echo "</div>";
-  echo "<textarea id='post-blocks-json' style='height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;'>$escaped</textarea>";
-}
-
 
 /*
 function post_published_webhook( $ID, $post ) {
