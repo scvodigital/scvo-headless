@@ -9,9 +9,7 @@ if ( !empty( $_GET['update-theme'] ) ) {
   echo '<html><body><pre>';
   try {
     echo 'Pulling latest theme\r\n';
-    $testOutput = shell_exec( 'ls -la' );
-    echo $testOutput . '\r\n';
-    $pullOutput = shell_exec( `cd /var/www/cms/wp-content/themes/scvo-headless && git reset -hard HEAD && git pull` );
+    $pullOutput = shell_exec( `cd wp-content/themes/scvo-headless && ls -lah && git pull` );
     echo $pullOutput . '\r\n';
     echo 'Done\r\n';
   } catch (Exception $ex) {
