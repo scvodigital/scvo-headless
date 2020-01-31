@@ -44,8 +44,10 @@ function display_blocks_meta_box( $post ) {
   $unslashed = wp_unslash($decoded);
   $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
   $escaped = htmlentities($prettified);
+  echo "<div style='text-align: right;'>";
+  echo "<button type='button' class='components-button is-button is-primary' onclick='document.querySelector(\"#post-blocks-json\").select();document.execCommand(\"copy\");'>Copy</button>";
+  echo "</div>";
   echo "<textarea id='post-blocks-json' style='height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;'>$escaped</textarea>";
-  echo "<button type='button' class='btn' onclick='document.querySelector(\"#post-blocks-json\").select();document.execCommand(\"copy\");'>Copy</button>";
 }
 
 
