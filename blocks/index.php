@@ -1,7 +1,8 @@
 <?php
 
 function on_all_status_transitions( $new_status, $old_status, $post ) {
-  if ( isset($post->post_content) ) {
+  $validStatuses = [ "publish", "pending", "future", "private", "trash" ];
+  if ( in_array( $new_status, $validStatuses ) && isset( $post->post_content ) ) {
     $parsed = parse_blocks( $post->post_content );
     $json = json_encode( $parsed );
     $ID = $post->ID;
