@@ -8,7 +8,7 @@ function on_all_status_transitions( $new_status, $old_status, $post ) {
   //   update_post_meta( $ID, 'blocks', wp_slash( $json ) );
   // }
 }
-add_action(  'transition_post_status',  'on_all_status_transitions', 10, 2 );
+add_action(  'transition_post_status',  'on_all_status_transitions', 10, 3 );
 
 function register_blocks_meta_box() {
   $postTypes = get_post_types( array(
