@@ -20,7 +20,7 @@ function display_blocks_meta_box( $post ) {
     '_builtin' => true
   ), 'names', 'and' );
 
-  print_r($postTypes);
+  echo '<pre>' . print_r($postTypes, true) . '</pre>';
 
 
   $json = get_post_meta( $post->ID, 'blocks', true );
