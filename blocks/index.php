@@ -1,12 +1,14 @@
 <?php
 
-function post_published_parse_blocks( $ID, $post ) {
-  $parsed = parse_blocks( $post->post_content );
-  $json = json_encode( $parsed );
-  update_post_meta( $ID, 'blocks', wp_slash( $json ) );
+function on_all_status_transitions( $new_status, $old_status, $post ) {
+  if ( $post->post_content ) {
+    $parsed = parse_blocks( $post->post_content );
+    $json = json_encode( $parsed );
+    $ID = $post->ID;
+    update_post_meta( $ID, 'blocks', wp_slash( $json ) );
+  }
 }
-
-add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
+add_action(  'transition_post_status',  'on_all_status_transitions', 10, 2 );
 
 function register_blocks_meta_box() {
   $postTypes = get_post_types( array(
@@ -22,7 +24,6 @@ function register_blocks_meta_box() {
 
   add_meta_box( 'blocks-meta-box', 'Blocks JSON', 'display_blocks_meta_box', $screenIds );
 }
-
 add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
 function display_blocks_meta_box( $post ) {
