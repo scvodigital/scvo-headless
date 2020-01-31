@@ -5,6 +5,13 @@
  * @package  SCVO_Headless
  */
 
+if ( !empty( $_GET['update-theme'] ) ) {
+  shell_exec( `cd /var/www/cms/wp-content/themes/scvo-headless && git reset -hard HEAD && git pull` );
+  echo 'Pulled';
+  exit();
+}
+
+
 //echo "<html><body><pre>";
 
 
