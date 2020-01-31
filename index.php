@@ -18,9 +18,7 @@ if ( !empty( $_GET['update-theme'] ) ) {
   exit();
 }
 
-
 //echo "<html><body><pre>";
-
 
 // Redirect individual posts to the REST API endpoint.
 if (is_singular()) {
