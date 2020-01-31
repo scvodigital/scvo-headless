@@ -1,12 +1,12 @@
 <?php
 
 function on_all_status_transitions( $new_status, $old_status, $post ) {
-  // if ( isset($post->post_content) ) {
-  //   $parsed = parse_blocks( $post->post_content );
-  //   $json = json_encode( $parsed );
-  //   $ID = $post->ID;
-  //   update_post_meta( $ID, 'blocks', wp_slash( $json ) );
-  // }
+  if ( isset($post->post_content) ) {
+    $parsed = parse_blocks( $post->post_content );
+    $json = json_encode( $parsed );
+    $ID = $post->ID;
+    update_post_meta( $ID, 'blocks', wp_slash( $json ) );
+  }
 }
 add_action(  'transition_post_status',  'on_all_status_transitions', 10, 3 );
 
