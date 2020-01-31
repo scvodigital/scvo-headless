@@ -1,6 +1,6 @@
 <?php
 
-function on_all_status_transitions( $new_status, $old_status, $post ) {
+function status_transition_update_blocks_json( $new_status, $old_status, $post ) {
   $validStatuses = [ "publish", "pending", "future", "private", "trash" ];
   if ( in_array( $new_status, $validStatuses ) && isset( $post->post_content ) ) {
     $parsed = parse_blocks( $post->post_content );
@@ -9,14 +9,15 @@ function on_all_status_transitions( $new_status, $old_status, $post ) {
     update_post_meta( $ID, 'blocks', wp_slash( $json ) );
   }
 }
-add_action(  'transition_post_status',  'on_all_status_transitions', 10, 3 );
+add_action( 'transition_post_status',  'status_transition_update_blocks_json', 10, 3 );
 
 function register_blocks_meta_box() {
-  $postTypes = get_post_types( array(
+  $args = array(
     'public' => true,
     '_builtin' => true
-  ), 'names', 'and' );
+  );
 
+  $postTypes = get_post_types( $args, 'names', 'and' );
   $screenIds = array();
 
   foreach ( $postTypes as $key => $value ) {
@@ -29,10 +30,12 @@ add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
 function display_blocks_meta_box( $post ) {
   $json = get_post_meta( $post->ID, 'blocks', true );
+
   $decoded = json_decode($json);
   $unslashed = wp_unslash($decoded);
   $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
   $escaped = htmlentities($prettified);
+
   echo "<div style='text-align: right;'>";
   echo "<button type='button' class='components-button is-button is-primary' onclick='document.querySelector(\"#post-blocks-json\").select();document.execCommand(\"copy\");'>Copy</button>";
   echo "</div>";
