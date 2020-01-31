@@ -39,7 +39,8 @@ function register_blocks_meta_box() {
 add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
 function display_blocks_meta_box( $post ) {
-  echo '<strong><em>TEST</em></strong>';
+  $json = get_post_meta( $post->ID, 'blocks' );
+  echo "<pre>$json</pre>";
 }
 
 
