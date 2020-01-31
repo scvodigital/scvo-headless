@@ -16,8 +16,8 @@ require_once get_parent_theme_file_path( '/blocks/index.php' );
  * May need to wrap this in an `if` to only implement when on localhost
  */
 
-add_filter( 'https_local_ssl_verify', '__return_false' );
-add_filter( 'http_request_args', 'curlArgs', 10, 2 );
+//add_filter( 'https_local_ssl_verify', '__return_false' );
+//add_filter( 'http_request_args', 'curlArgs', 10, 2 );
 
 function curlArgs($r, $url) {
   $r['sslverify'] = false;
@@ -30,7 +30,7 @@ function post_published_parse_blocks( $ID, $post ) {
   //update_post_meta( $ID, 'blocks', wp_slash( $json ) );
 }
 
-add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
+//add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
 
 function register_blocks_meta_box() {
   add_meta_box( 'blocks-meta-box', 'Blocks JSON', 'display_blocks_meta_box', 'post' );
