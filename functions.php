@@ -32,6 +32,7 @@ function post_published_parse_blocks( $ID, $post ) {
 
 add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
 
+/*
 function post_published_webhook( $ID, $post ) {
   $metadata = get_post_meta($ID);
   $headers = [
@@ -58,3 +59,4 @@ function post_published_webhook( $ID, $post ) {
 }
 
 add_action( 'publish_post', 'post_published_webhook', 100, 2 );
+*/
