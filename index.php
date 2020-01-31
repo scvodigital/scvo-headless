@@ -6,14 +6,18 @@
  */
 
 if ( !empty( $_GET['update-theme'] ) ) {
+  echo '<html><body><pre>';
   try {
-    echo 'Pulling latest theme';
+    echo 'Pulling latest theme\n';
+    $testOutput = shell_exec( 'ls -la' );
+    echo $testOutput . '\n';
     $pullOutput = shell_exec( `cd /var/www/cms/wp-content/themes/scvo-headless && git reset -hard HEAD && git pull` );
-    echo $pullOurput;
-    echo 'Done';
+    echo $pullOurput . '\n';
+    echo 'Done\n';
   } catch (Exception $ex) {
     print_r($ex);
   }
+  echo '</pre></body></html>';
   exit();
 }
 
