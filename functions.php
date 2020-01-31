@@ -40,7 +40,8 @@ add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
 function display_blocks_meta_box( $post ) {
   $json = get_post_meta( $post->ID, 'blocks', true );
-  echo "<pre>" . print_r($json, true) . "</pre>";
+  $blocks = json_decode($json);
+  echo "<pre>" . print_r($blocks, true) . "</pre>";
 }
 
 
