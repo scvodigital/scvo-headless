@@ -20,7 +20,13 @@ function display_blocks_meta_box( $post ) {
     '_builtin' => true
   ), 'names', 'and' );
 
-  echo '<pre>' . print_r($postTypes, true) . '</pre>';
+  $screenIds = array();
+
+  foreach ($postTypes as $key => $value) {
+    array_push($screenIds, $key, "edit-$key");
+  }
+
+  echo '<pre>' . print_r($screenIds, true) . '</pre>';
 
 
   $json = get_post_meta( $post->ID, 'blocks', true );
