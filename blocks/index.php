@@ -9,12 +9,6 @@ function post_published_parse_blocks( $ID, $post ) {
 add_action( 'publish_post', 'post_published_parse_blocks', 10, 2 );
 
 function register_blocks_meta_box() {
-  add_meta_box( 'blocks-meta-box', 'Blocks JSON', 'display_blocks_meta_box', 'post' );
-}
-
-add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
-
-function display_blocks_meta_box( $post ) {
   $postTypes = get_post_types( array(
     'public' => true,
     '_builtin' => true
@@ -22,13 +16,16 @@ function display_blocks_meta_box( $post ) {
 
   $screenIds = array();
 
-  foreach ($postTypes as $key => $value) {
+  foreach ( $postTypes as $key => $value ) {
     array_push($screenIds, $key, "edit-$key");
   }
 
-  echo '<pre>' . print_r($screenIds, true) . '</pre>';
+  add_meta_box( 'blocks-meta-box', 'Blocks JSON', 'display_blocks_meta_box', $screenIds );
+}
 
+add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
+function display_blocks_meta_box( $post ) {
   $json = get_post_meta( $post->ID, 'blocks', true );
   $decoded = json_decode($json);
   $unslashed = wp_unslash($decoded);
