@@ -41,7 +41,7 @@ add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 function display_blocks_meta_box( $post ) {
   $json = get_post_meta( $post->ID, 'blocks', true );
   $blocks = wp_unslash(json_decode($json));
-  echo "<pre>" . json_encode($blocks, JSON_PRETTY_PRINT) . "</pre>";
+  echo "<pre>" . json_encode($blocks, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "</pre>";
 }
 
 
