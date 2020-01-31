@@ -15,6 +15,14 @@ function register_blocks_meta_box() {
 add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
 function display_blocks_meta_box( $post ) {
+  $postTypes = get_post_types( array(
+    'public' => true,
+    '_builtin' => true
+  ), 'names', 'and' );
+
+  echo $postTypes;
+
+
   $json = get_post_meta( $post->ID, 'blocks', true );
   $decoded = json_decode($json);
   $unslashed = wp_unslash($decoded);
