@@ -8,10 +8,9 @@
 if ( !empty( $_GET['update-theme'] ) ) {
   echo '<html><body><pre>';
   try {
-    echo 'Pulling latest theme\r\n';
-    echo shell_exec( `ls wp-content/themes/scvo-headless` );
+    echo "Pulling latest theme\n\n";
     echo shell_exec( `git --git-dir=wp-content/themes/scvo-headless/.git pull` );
-    echo 'Done\r\n';
+    echo "\nDone\n";
   } catch (Exception $ex) {
     print_r($ex);
   }
