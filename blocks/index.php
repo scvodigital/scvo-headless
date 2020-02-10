@@ -79,34 +79,33 @@ function display_blocks_meta_box( $post ) {
       });
     });
   </script>
-  EOD;
+EOD;
 }
 
 /**
  * Ajax action to get a post's Gutenberg JSON
  */
 
-// function get_post_gutenberg_json() {
-//   header( 'content-type: application/json' );
+function get_post_gutenberg_json() {
+  header( 'content-type: application/json' );
 
-//   try {
-//     if (empty($_GET['id'])) {
-//       throw new Exception( 'No content Id provided' );
-//     }
+  try {
+    if (empty($_GET['id'])) {
+      throw new Exception( 'No content Id provided' );
+    }
 
-//     $json = get_post_meta( $_GET['id'], 'blocks', true );
+    $json = get_post_meta( $_GET['id'], 'blocks', true );
 
-//     $decoded = json_decode($json);
-//     $unslashed = wp_unslash($decoded);
-//     $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    $decoded = json_decode($json);
+    $unslashed = wp_unslash($decoded);
+    $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-//     echo $prettified;
-//   } catch( Exception $ex) {
-//     echo json_encode($ex);
-//   }
+    echo $prettified;
+  } catch( Exception $ex) {
+    echo json_encode($ex);
+  }
 
-//   wp_die();
-// }
+  wp_die();
+}
 
-// add_action( 'wp_ajax_get-post-gutenberg-json', 'get_post_gutenberg_json' );
-?>
+add_action( 'wp_ajax_get-post-gutenberg-json', 'get_post_gutenberg_json' );
