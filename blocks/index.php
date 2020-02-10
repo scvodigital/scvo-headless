@@ -21,8 +21,7 @@ add_action( 'transition_post_status',  'status_transition_update_blocks_json', 1
 
 function register_blocks_meta_box() {
   $args = array(
-    'public' => true,
-    '_builtin' => true
+    'public' => true
   );
 
   $postTypes = get_post_types( $args, 'names', 'and' );
