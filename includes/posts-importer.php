@@ -1,10 +1,10 @@
 <?php
 
 function import_tfn_posts() {
-  header( 'content-type: application/json' );
+  //header( 'content-type: application/json' );
 
   try {
-    echo json_encode($_POST);
+    print_r($_POST);
   } catch( Exception $ex ) {
     echo '{ "error": ' . json_encode($ex->getMessage()) . '" }';
   }
