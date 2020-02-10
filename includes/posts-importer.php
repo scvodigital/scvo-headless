@@ -13,6 +13,8 @@ function import_tfn_posts() {
     echo json_encode($ex);
   }
 
+  echo 'test';
+
   wp_die();
 }
 
