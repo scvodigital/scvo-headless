@@ -69,15 +69,17 @@ function display_blocks_meta_box( $post ) {
         const isAutosaving = coreEditor.isAutosavingPost();
         const finishedSaving = coreEditor.didPostSaveRequestSucceed();
 
-        if (isSaving && !isAutosaving) {
-          if (finishedSaving) {
-            console.log('Finished saving');
-          } else {
-            console.log('Not finished saving');
-          }
-        } else {
-          console.log('Not saving or autosaving');
-        }
+        console.log(`isSaving: ${isSaving}, isAutosaving: ${isAutosaving}, finishedSaving: ${finishedSaving}`);
+
+        //if (isSaving && !isAutosaving) {
+        //  if (finishedSaving) {
+        //    console.log('Finished saving');
+        //  } else {
+        //    console.log('Not finished saving');
+        //  }
+        //} else {
+        //  console.log('Not saving or autosaving');
+        //}
 
         // if (debounce) {
         //   window.clearTimeout(debounce);
