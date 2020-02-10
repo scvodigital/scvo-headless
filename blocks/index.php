@@ -43,7 +43,6 @@ function display_blocks_meta_box( $post ) {
   $decoded = json_decode($json);
   $unslashed = wp_unslash($decoded);
   $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-  $escaped = htmlentities($prettified);
 
   echo <<<EOD
   <div style="text-align: right;">
@@ -53,7 +52,7 @@ function display_blocks_meta_box( $post ) {
   </div>
   <textarea id="post-blocks-json" style="height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;">Loading JSON</textarea>
   <script>
-    const blocks = $escaped;
+    const blocks = $prettified;
     document.addEventListener('DOMContentLoaded', () => {
       const copyButton = document.querySelector('#post-blocks-json-copy');
       const textbox = document.querySelector('#post-blocks-json');
