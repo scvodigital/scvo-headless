@@ -37,6 +37,14 @@ function register_blocks_meta_box() {
 add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
 function display_blocks_meta_box( $post ) {
+  $id = $post->ID;
+  $json = get_post_meta( $id, 'blocks', true );
+
+  $decoded = json_decode($json);
+  $unslashed = wp_unslash($decoded);
+  $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+  $escaped = htmlentities($prettified);
+
   echo <<<EOD
   <div style="text-align: right;">
     <button type="button" id="post-blocks-json-copy" class="components-button is-button is-primary">
@@ -45,9 +53,11 @@ function display_blocks_meta_box( $post ) {
   </div>
   <textarea id="post-blocks-json" style="height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;">Loading JSON</textarea>
   <script>
+    const blocks = $escaped;
     document.addEventListener('DOMContentLoaded', () => {
       const copyButton = document.querySelector('#post-blocks-json-copy');
       const textbox = document.querySelector('#post-blocks-json');
+      jQuery(textbox).html(JSON.stringify(blocks, null, 2));
 
       copyButton.addEventListener('click', () => {
         textbox.select();
