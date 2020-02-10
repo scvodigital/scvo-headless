@@ -63,7 +63,8 @@ function display_blocks_meta_box( $post ) {
       });
 
       let debounce = null;
-      window.wp.data.subscribe(() => {
+      window.wp.data.subscribe(function() {
+        console.log(arguments);
         if (debounce) {
           window.clearTimeout(debounce);
         }
