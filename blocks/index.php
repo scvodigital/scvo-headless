@@ -67,9 +67,8 @@ function get_post_gutenberg_json() {
     $decoded = json_decode($json);
     $unslashed = wp_unslash($decoded);
     $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    $escaped = htmlentities($prettified);
 
-    echo $escaped;
+    echo $prettified;
   } catch( Exception $ex) {
     echo json_encode($ex);
   }
