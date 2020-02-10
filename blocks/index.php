@@ -108,3 +108,4 @@ function get_post_gutenberg_json() {
 }
 
 add_action( 'wp_ajax_get-post-gutenberg-json', 'get_post_gutenberg_json' );
+?>
