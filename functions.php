@@ -10,6 +10,7 @@
  */
 
 require_once get_parent_theme_file_path( '/blocks/index.php' );
+require_once get_parent_theme_file_path( '/includes/posts-importer.php' );
 
 /**
  * Fix invalid SSL issue on localhost
@@ -23,18 +24,6 @@ function curlArgs($r, $url) {
   $r['sslverify'] = false;
   return $r;
 }
-
-/**
- * Ajax Hook to create API to convert Gutenberg block JSON to HTML
- */
-
-function gutenberg_to_html_requested() {
-  header('content-type: application/json');
-  echo json_encode($_SERVER);
-  wp_die();
-}
-
-add_action( 'wp_ajax_gutenberg-to-html', 'gutenberg_to_html_requested' );
 
 /*
 function post_published_webhook( $ID, $post ) {
