@@ -78,7 +78,7 @@ function display_blocks_meta_box( $post ) {
       });
     });
   </script>
-  <?
+  <?php
 }
 
 /**
