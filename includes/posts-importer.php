@@ -1,11 +1,19 @@
 <?php
 
-function register_tfn_importer_page() {
-  add_menu_page( 'TFN Importer', 'TFN Importer', 'manage_options', 'tfn-importer', 'tfn_importer_page' );
+function import_tfn_posts() {
+  header( 'content-type: application/json' );
+
+  try {
+    if (empty($_POST['posts'])) {
+      throw new Exception( 'No posts provided' );
+    }
+
+    echo $_POST['posts'];
+  } catch( Exception $ex) {
+    echo json_encode($ex);
+  }
+
+  wp_die();
 }
 
-add_action( 'admin_menu', 'register_tfn_importer_page' );
-
-function tfn_importer_page() {
-  echo 'Dope';
-}
+add_action( 'wp_ajax_nopriv_import-tfn-posts', 'import_tfn_posts' );
