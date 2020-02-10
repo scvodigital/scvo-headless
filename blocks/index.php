@@ -62,7 +62,7 @@ function display_blocks_meta_box( $post ) {
         document.execCommand('copy');
       });
 
-      const debounce = null;
+      let debounce = null;
       window.wp.data.subscribe(() => {
         if (debounce) {
           window.clearTimeout(debounce);
