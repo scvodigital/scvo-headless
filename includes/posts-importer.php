@@ -9,8 +9,8 @@ function import_tfn_posts() {
     }
 
     echo $_POST['posts'];
-  } catch( Exception $ex) {
-    echo json_encode($ex);
+  } catch( Exception $ex ) {
+    echo json_encode($ex->getMessage());
   }
 
   echo 'test';
