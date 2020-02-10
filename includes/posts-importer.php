@@ -28,5 +28,5 @@ function import_tfn_posts() {
 add_action( 'wp_ajax_nopriv_import-tfn-posts', 'import_tfn_posts' );
 
 function import_tfn_post( $post ) {
-  return $post->title;
+  return $post['title'];
 }
