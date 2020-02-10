@@ -4,11 +4,7 @@ function import_tfn_posts() {
   header( 'content-type: application/json' );
 
   try {
-    if (empty($_POST['posts'])) {
-      throw new Exception( 'No posts provided' );
-    }
-
-    echo $_POST['posts'];
+    echo json_encode($_POST);
   } catch( Exception $ex ) {
     echo '{ "error": ' . json_encode($ex->getMessage()) . '" }';
   }
