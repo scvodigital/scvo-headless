@@ -63,8 +63,22 @@ function display_blocks_meta_box( $post ) {
       });
 
       let debounce = null;
-      window.wp.data.subscribe(function() {
-        console.log(arguments);
+      wp.data.subscribe(() => {
+        const coreEditor = wp.data.select('core/editor');
+        const isSaving = coreEditor.isSavingPost();
+        const isAutosaving = coreEditor.isAutosavingPost();
+        const finishedSaving = coreEditor.didPostSaveRequestSucceed();
+
+        if (isSaving && !isAutosaving) {
+          if (finishedSaving) {
+            console.log('Finished saving');
+          } else {
+            console.log('Not finished saving');
+          }
+        } else {
+          console.log('Not saving or autosaving');
+        }
+
         if (debounce) {
           window.clearTimeout(debounce);
         }
