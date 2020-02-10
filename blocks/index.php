@@ -45,7 +45,7 @@ function display_blocks_meta_box( $post ) {
   $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
   $escaped = htmlentities($prettified);
 
-  $metaboxHtml = <<<EOD
+  echo <<<EOD
   <div style="text-align: right;">
     <button type="button" id="post-blocks-json-copy" class="components-button is-button is-primary">
       Copy
