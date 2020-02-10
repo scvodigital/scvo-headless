@@ -28,34 +28,24 @@ function tfn_import_posts() {
 add_action( 'wp_ajax_nopriv_import-tfn-posts', 'tfn_import_posts' );
 
 function tfn_import_post( $post ) {
-  tfn_is_post_valid( $post );
+  try {
+    tfn_is_post_valid( $post );
 
-  return $post['title'];
+    return $post['title'];
+  } catch (Exception $ex) {
+    return $ex;
+  }
 }
 
 function tfn_is_post_valid( $post ) {
-  $postSchema = [
-    "url" => is_string,
-    "title" => is_string,
-    "copy" => is_string,
-    "postType" => is_string,
-    "category" => is_string,
-    "slug" => is_string,
-    "author" => is_string,
-    "date" => is_string,
-    "ogDescription" => is_string,
-    "blocks" => is_array
-  ];
-  $issues = array();
-
-  foreach( $postSchema as $field => $method) {
-    if (!$method($post[$field])) {
-      array_push($issues, $field);
-    }
-  }
-
-  if (count($issues) > 0) {
-    $issuesSummary = implode(", ", $issues);
-    throw new Exception("There were issues with the following fields: $issuesSummary");
-  }
+  if (!is_string($post["url"])) { throw new Exception("Post url invalid"); }
+  if (!is_string($post["title"])) { throw new Exception("Post title invalid"); }
+  if (!is_string($post["copy"])) { throw new Exception("Post copy invalid"); }
+  if (!is_string($post["postType"])) { throw new Exception("Post postType invalid"); }
+  if (!is_string($post["category"])) { throw new Exception("Post category invalid"); }
+  if (!is_string($post["slug"])) { throw new Exception("Post slug invalid"); }
+  if (!is_string($post["author"])) { throw new Exception("Post author invalid"); }
+  if (!is_string($post["date"])) { throw new Exception("Post date invalid"); }
+  if (!is_string($post["ogDescription"])) { throw new Exception("Post ogDescription invalid"); }
+  if (!is_array($post["blocks"])) { throw new Exception("Post blocks invalid"); }
 }
