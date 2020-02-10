@@ -69,7 +69,7 @@ function display_blocks_meta_box( $post ) {
         const isAutosaving = coreEditor.isAutosavingPost();
         const finishedSaving = coreEditor.didPostSaveRequestSucceed();
 
-        console.log(`isSaving: ${isSaving}, isAutosaving: ${isAutosaving}, finishedSaving: ${finishedSaving}`);
+        console.log(`isSaving: \${isSaving}, isAutosaving: \${isAutosaving}, finishedSaving: \${finishedSaving}`);
 
         //if (isSaving && !isAutosaving) {
         //  if (finishedSaving) {
