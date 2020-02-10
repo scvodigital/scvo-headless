@@ -10,10 +10,8 @@ function import_tfn_posts() {
 
     echo $_POST['posts'];
   } catch( Exception $ex ) {
-    echo json_encode($ex->getMessage());
+    echo '{ "error": ' . json_encode($ex->getMessage()) . '" }';
   }
-
-  echo 'test';
 
   wp_die();
 }
