@@ -24,6 +24,18 @@ function curlArgs($r, $url) {
   return $r;
 }
 
+/**
+ * Ajax Hook to create API to convert Gutenberg block JSON to HTML
+ */
+
+function scvo_gutenberg_to_html($request) {
+  header('content-type: application/json');
+  echo json_encode($request);
+  wp_die();
+}
+
+add_action( 'wp_ajax_nopriv_gutenberg_to_html', 'scvo_gutenberg_to_html' );
+
 /*
 function post_published_webhook( $ID, $post ) {
   $metadata = get_post_meta($ID);
