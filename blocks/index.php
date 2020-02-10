@@ -73,7 +73,7 @@ function display_blocks_meta_box( $post ) {
           console.log('Getting Gutenberg JSON from', url);
           jQuery.getJSON(url, {}, (data, status, xhr) => {
             console.log(data, status, xhr);
-            jQuery(textbox).html(data);
+            jQuery(textbox).html(JSON.stringify(data, null, 2));
           });
         }, 1000);
       });
