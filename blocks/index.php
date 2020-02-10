@@ -32,6 +32,8 @@ function register_blocks_meta_box() {
     array_push($screenIds, $key, "edit-$key");
   }
 
+  echo "<!--\n" . print_r($screenIds, true) . "\n-->";
+
   add_meta_box( 'blocks-meta-box', 'Blocks JSON', 'display_blocks_meta_box', $screenIds );
 }
 add_action( 'add_meta_boxes', 'register_blocks_meta_box' );

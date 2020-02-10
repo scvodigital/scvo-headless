@@ -1,6 +1,6 @@
 <?php
 
-function import_tfn_posts() {
+function tfn_import_posts() {
   header( 'content-type: application/json' );
 
   try {
@@ -25,8 +25,27 @@ function import_tfn_posts() {
   wp_die();
 }
 
-add_action( 'wp_ajax_nopriv_import-tfn-posts', 'import_tfn_posts' );
+add_action( 'wp_ajax_nopriv_import-tfn-posts', 'tfn_import_posts' );
 
-function import_tfn_post( $post ) {
+function tfn_import_post( $post ) {
   return $post['title'];
 }
+
+function tfn_is_post_valid( $post ) {
+  $issues = array();
+
+  if (empty($post['title'])) {
+
+  }
+}
+
+
+// "url": "/tfn-news/charities-unite-against-daily-mail-attack",
+// "title": "Charities unite against Daily Mail attack",
+// "copy": "Daily Mail accused of irresponsible journalism after instigating a campaign against Scotland's third sector",
+// "premium": null,
+// "postType": "tfn-news",
+// "category": "management",
+// "slug": "charities-unite-against-daily-mail-attack",
+// "author": "Robert Armour",
+// "date": "17th January 2017",
