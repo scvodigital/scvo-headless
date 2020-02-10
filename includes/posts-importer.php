@@ -33,7 +33,7 @@ function tfn_import_post( $post ) {
 
     return $post['title'];
   } catch (Exception $ex) {
-    return $ex;
+    return [ 'error' => $ex->getMessage() ];
   }
 }
 
