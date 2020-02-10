@@ -28,13 +28,13 @@ function curlArgs($r, $url) {
  * Ajax Hook to create API to convert Gutenberg block JSON to HTML
  */
 
-function scvo_gutenberg_to_html($request) {
+function gutenberg_to_html_requested() {
   header('content-type: application/json');
-  echo json_encode($request);
+  echo json_encode($_SERVER);
   wp_die();
 }
 
-add_action( 'wp_ajax_nopriv_gutenberg_to_html', 'scvo_gutenberg_to_html' );
+add_action( 'wp_ajax_gutenberg-to-html', 'gutenberg_to_html_requested' );
 
 /*
 function post_published_webhook( $ID, $post ) {
