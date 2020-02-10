@@ -45,41 +45,42 @@ function display_blocks_meta_box( $post ) {
   $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
   $escaped = htmlentities($prettified);
 
-  echo <<<EOD
-  <div style="text-align: right;">
-    <button type="button" id="post-blocks-json-copy" class="components-button is-button is-primary">
-      Copy
-    </button>
-  </div>
-  <textarea id="post-blocks-json" style="height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;">${escaped}</textarea>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const copyButton = document.querySelector('#post-blocks-json-copy');
-      const textbox = document.querySelector('#post-blocks-json');
+//   echo <<<EOD
+//   <div style="text-align: right;">
+//     <button type="button" id="post-blocks-json-copy" class="components-button is-button is-primary">
+//       Copy
+//     </button>
+//   </div>
+//   <textarea id="post-blocks-json" style="height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;">${escaped}</textarea>
+//   <script>
+//     document.addEventListener('DOMContentLoaded', () => {
+//       const copyButton = document.querySelector('#post-blocks-json-copy');
+//       const textbox = document.querySelector('#post-blocks-json');
 
-      copyButton.addEventListener('click', () => {
-        textbox.select();
-        document.execCommand('copy');
-      });
+//       copyButton.addEventListener('click', () => {
+//         textbox.select();
+//         document.execCommand('copy');
+//       });
 
-      const debounce = null;
-      window.wp.data.subscribe(() => {
-        if (debounce) {
-          window.clearTimeout(debounce);
-        }
+//       const debounce = null;
+//       window.wp.data.subscribe(() => {
+//         if (debounce) {
+//           window.clearTimeout(debounce);
+//         }
 
-        debounce = window.setTimeout(() => {
-          const url = '/wp-admin/admin-ajax.php?action=get-post-gutenberg-json&id=${id}} ?>';
-          console.log('Getting Gutenberg JSON from', url);
-          jQuery.getJSON(url, {}, (data, status, xhr) => {
-            console.log(data, status, xhr);
-            jQuery(textbox).html(data);
-          });
-        }, 1000);
-      });
-    });
-  </script>
-EOD;
+//         debounce = window.setTimeout(() => {
+//           const url = '/wp-admin/admin-ajax.php?action=get-post-gutenberg-json&id=${id}} ?>';
+//           console.log('Getting Gutenberg JSON from', url);
+//           jQuery.getJSON(url, {}, (data, status, xhr) => {
+//             console.log(data, status, xhr);
+//             jQuery(textbox).html(data);
+//           });
+//         }, 1000);
+//       });
+//     });
+//   </script>
+// EOD;
+  echo 'Wut';
 }
 
 /**
