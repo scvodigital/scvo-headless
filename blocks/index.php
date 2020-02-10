@@ -37,21 +37,13 @@ function register_blocks_meta_box() {
 add_action( 'add_meta_boxes', 'register_blocks_meta_box' );
 
 function display_blocks_meta_box( $post ) {
-  $id = $post->ID;
-  $json = get_post_meta( $id, 'blocks', true );
-
-  $decoded = json_decode($json);
-  $unslashed = wp_unslash($decoded);
-  $prettified = json_encode($unslashed, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-  $escaped = htmlentities($prettified);
-
   echo <<<EOD
   <div style="text-align: right;">
     <button type="button" id="post-blocks-json-copy" class="components-button is-button is-primary">
       Copy
     </button>
   </div>
-  <textarea id="post-blocks-json" style="height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;">$escaped</textarea>
+  <textarea id="post-blocks-json" style="height: 50vh; width: 100%; font-family: monospace; border: 1px solid #dadada; border-radius: 0;">Loading JSON</textarea>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const copyButton = document.querySelector('#post-blocks-json-copy');
@@ -69,30 +61,20 @@ function display_blocks_meta_box( $post ) {
         const isAutosaving = coreEditor.isAutosavingPost();
         const finishedSaving = coreEditor.didPostSaveRequestSucceed();
 
-        console.log(`isSaving: \${isSaving}, isAutosaving: \${isAutosaving}, finishedSaving: \${finishedSaving}`);
+        if (isSaving && !isAutosaving && finishedSaving) {
+          if (debounce) {
+            window.clearTimeout(debounce);
+          }
 
-        //if (isSaving && !isAutosaving) {
-        //  if (finishedSaving) {
-        //    console.log('Finished saving');
-        //  } else {
-        //    console.log('Not finished saving');
-        //  }
-        //} else {
-        //  console.log('Not saving or autosaving');
-        //}
-
-        // if (debounce) {
-        //   window.clearTimeout(debounce);
-        // }
-
-        // debounce = window.setTimeout(() => {
-        //   const url = '/wp-admin/admin-ajax.php?action=get-post-gutenberg-json&id=$id';
-        //   console.log('Getting Gutenberg JSON from', url);
-        //   jQuery.getJSON(url, {}, (data, status, xhr) => {
-        //     console.log(data, status, xhr);
-        //     jQuery(textbox).html(JSON.stringify(data, null, 2));
-        //   });
-        // }, 1000);
+          debounce = window.setTimeout(() => {
+            const url = '/wp-admin/admin-ajax.php?action=get-post-gutenberg-json&id=$post->ID';
+            console.log('Getting Gutenberg JSON from', url);
+            jQuery.getJSON(url, {}, (data, status, xhr) => {
+              console.log(data, status, xhr);
+              jQuery(textbox).html(JSON.stringify(data, null, 2));
+            });
+          }, 1000);
+        }
       });
     });
   </script>
