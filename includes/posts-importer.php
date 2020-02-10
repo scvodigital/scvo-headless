@@ -4,7 +4,9 @@ function import_tfn_posts() {
   //header( 'content-type: application/json' );
 
   try {
-    print_r($_POST);
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    print_r($data);
   } catch( Exception $ex ) {
     echo '{ "error": ' . json_encode($ex->getMessage()) . '" }';
   }
