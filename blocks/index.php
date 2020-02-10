@@ -79,18 +79,18 @@ function display_blocks_meta_box( $post ) {
           console.log('Not saving or autosaving');
         }
 
-        if (debounce) {
-          window.clearTimeout(debounce);
-        }
+        // if (debounce) {
+        //   window.clearTimeout(debounce);
+        // }
 
-        debounce = window.setTimeout(() => {
-          const url = '/wp-admin/admin-ajax.php?action=get-post-gutenberg-json&id=$id';
-          console.log('Getting Gutenberg JSON from', url);
-          jQuery.getJSON(url, {}, (data, status, xhr) => {
-            console.log(data, status, xhr);
-            jQuery(textbox).html(JSON.stringify(data, null, 2));
-          });
-        }, 1000);
+        // debounce = window.setTimeout(() => {
+        //   const url = '/wp-admin/admin-ajax.php?action=get-post-gutenberg-json&id=$id';
+        //   console.log('Getting Gutenberg JSON from', url);
+        //   jQuery.getJSON(url, {}, (data, status, xhr) => {
+        //     console.log(data, status, xhr);
+        //     jQuery(textbox).html(JSON.stringify(data, null, 2));
+        //   });
+        // }, 1000);
       });
     });
   </script>
