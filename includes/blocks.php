@@ -19,6 +19,7 @@ add_action( 'transition_post_status',  'status_transition_update_blocks_json', 1
  * Add a meta box to pages that have Gutenberg content to display their JSON
  */
 
+/*
 function register_blocks_meta_box() {
   $args = array(
     'public' => true
@@ -88,6 +89,7 @@ function display_blocks_meta_box( $post ) {
   </script>
 EOD;
 }
+*/
 
 /**
  * Ajax action to get a post's Gutenberg JSON
@@ -116,3 +118,19 @@ function get_post_gutenberg_json() {
 }
 
 add_action( 'wp_ajax_get-post-gutenberg-json', 'get_post_gutenberg_json' );
+
+/**
+ * Register custom blocks
+ */
+
+function load_custom_blocks() {
+  $blocksDir = get_parent_theme_file_path( '/includes/blocks/*.jsx' );
+  $blockFiles = glob( $blocksDir );
+  foreach ( $blockFiles as $blockFile ) {
+    $scriptName = basename( $blockFile, '.jsx' );
+    $scriptUrl = get_theme_file_uri( "includes/blocks/$scriptName.jsx" );
+    wp_enqueue_script( $scriptName . '-block', $scriptUrl, array( 'wp-blocks', 'wp-editor' ), true );
+  }
+}
+
+add_action( 'enqueue_block_editor_assets', 'load_custom_blocks' );

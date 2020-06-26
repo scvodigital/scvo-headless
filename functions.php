@@ -9,8 +9,10 @@
  * Require modules
  */
 
-require_once get_parent_theme_file_path( '/blocks/index.php' );
-require_once get_parent_theme_file_path( '/includes/posts-importer.php' );
+require_once get_parent_theme_file_path( '/includes/blocks.php' );
+require_once get_parent_theme_file_path( '/includes/polls.php' );
+require_once get_parent_theme_file_path( '/includes/comments.php' );
+
 
 /**
  * Fix invalid SSL issue on localhost
@@ -20,36 +22,51 @@ require_once get_parent_theme_file_path( '/includes/posts-importer.php' );
 add_filter( 'https_local_ssl_verify', '__return_false' );
 add_filter( 'http_request_args', 'curlArgs', 10, 2 );
 
-function curlArgs($r, $url) {
+function curlArgs( $r, $url ) {
   $r['sslverify'] = false;
   return $r;
 }
 
-/*
-function post_published_webhook( $ID, $post ) {
-  $metadata = get_post_meta($ID);
-  $headers = [
-    'content-type' => 'application/json',
-    'test' => 'this is a test'
-  ];
-  $body = [
-    'site' => 'tfn',
-    'id' => $ID,
-    'title' => $post->post_title,
-    'author' => $post->post_author,
-    'content' => $post->post_content,
-    'metadata' => $metadata
-  ];
-  $request = new WP_Http();
-  $request->request('https://wp-indexer.scvo.local:8080/index', [
-    'method' => 'POST',
-    'headers' => $headers,
-    'body' => json_encode($body)
-  ]);
+/**
+ * Allow comments from non logged in users throught he REST API
+ */
 
-  $path = '/home/tonicblue/code/scvo/sites/sites/wp-indexer/configuration/templates/last-published-post.json';
-  file_put_contents($path, json_encode($body));
+add_filter( 'rest_allow_anonymous_comments', '__return_true' );
+
+/** */
+
+function update_theme() {
+  if ( $_SERVER['REQUEST_URI'] !== '/update-theme' ) return;
+
+  echo '<html><body><pre>';
+  try {
+    echo "Pulling latest theme\n\n";
+    echo shell_exec( "cd wp-content/themes/scvo-headless/ && git reset --hard HEAD 2>&1 && git pull 2>&1" ) . "\n";
+    echo "Done\n";
+  } catch (Exception $ex) {
+    echo $ex->getMessage();
+  }
+  echo '</pre></body></html>';
+  exit();
 }
+add_action( 'init', 'update_theme' );
 
-add_action( 'publish_post', 'post_published_webhook', 100, 2 );
-*/
+/** */
+
+function clear_uploads() {
+  if ( $_SERVER['REQUEST_URI'] !== '/clear-uploads' ) return;
+
+  echo '<html><body><pre>';
+  try {
+    echo 'Clearing uploads\n\n';
+    echo shell_exec( "rm -rf /var/www/cms/wp-content/uploads 2>&1 && mkdir /var/www/cms/wp-content/uploads 2>&1" ) . "\n";
+    echo "Done\n";
+  } catch (Exception $ex) {
+    echo $ex->getMessage();
+  }
+  echo '</pre></body></html>';
+  exit();
+}
+add_action( 'init', 'clear_uploads' );
+
+require_once get_parent_theme_file_path( 'headless.php' );
