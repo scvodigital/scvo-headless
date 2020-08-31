@@ -3,7 +3,7 @@
 /**
  * Action to automatically get Gutenberg JSON on save of any Gutenberg content
  */
-
+/*
 function status_transition_update_blocks_json( $new_status, $old_status, $post ) {
   $validStatuses = [ "publish", "pending", "future", "private", "trash" ];
   if ( in_array( $new_status, $validStatuses ) && isset( $post->post_content ) ) {
@@ -14,7 +14,7 @@ function status_transition_update_blocks_json( $new_status, $old_status, $post )
   }
 }
 add_action( 'transition_post_status',  'status_transition_update_blocks_json', 10, 3 );
-
+*/
 /**
  * Add a meta box to pages that have Gutenberg content to display their JSON
  */
@@ -95,6 +95,7 @@ EOD;
  * Ajax action to get a post's Gutenberg JSON
  */
 
+/*
 function get_post_gutenberg_json() {
   header( 'content-type: application/json' );
 
@@ -118,10 +119,12 @@ function get_post_gutenberg_json() {
 }
 
 add_action( 'wp_ajax_get-post-gutenberg-json', 'get_post_gutenberg_json' );
+*/
 
 /**
  * Register custom blocks
  */
+
 
 function load_custom_blocks() {
   $blocksDir = get_parent_theme_file_path( '/includes/blocks/*.jsx' );

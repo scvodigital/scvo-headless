@@ -8,9 +8,10 @@ function setup_poll_database() {
     CREATE TABLE IF NOT EXISTS {$wpdb->prefix}tfn_poll_votes (
       poll_id INT,
       fingerprint VARCHAR(255),
-      ip_address VARCHAR(15),
-      vote VARCHAR(255),
-      vote_date DATETIME,
+      ip_address VARCHAR(64),
+      vote VARCHAR(255) NOT NULL,
+      vote_date DATETIME NOT NULL,
+      vote_weight INT NOT NULL,
       PRIMARY KEY (poll_id, fingerprint, ip_address)
     ) $charset_collate;";
 
@@ -26,40 +27,49 @@ function place_poll_vote_callback() {
   $response = [];
 
   try {
-    $cookie = get_or_create_cookie();
+    $json = file_get_contents('php://input');
+    $data = json_decode($json);
+    $response['post_data'] = $data;
 
-    if ( !isset( $_POST['poll_id'] ) ) throw new Exception( 'You must post a poll_id', 400 );
-    if ( !isset( $_POST['vote'] ) ) throw new Exception( 'You must post a vote', 400 );
+    if ( empty( $data->poll_id ) ) throw new Exception( 'You must post a poll_id', 400 );
+    if ( empty( $data->fingerprint ) ) throw new Exception( 'You must post a fingerprint', 400 );
+    if ( empty( $data->ip_address ) ) throw new Exception( 'You must post a IP address', 400 );
+    if ( empty( $data->vote ) ) throw new Exception( 'You must post a vote', 400 );
 
-    $poll_id = $_POST['poll_id'];
-    $ip_address = $_SERVER['REMOTE_ADDR'];
-    $vote = $_POST['vote'];
     $vote_date = date('Y-m-d H:i:s');
 
-    $poll = get_post( $poll_id );
+    $poll = get_post( $data->poll_id );
 
-    if ( empty( $poll ) || $poll->post_type !== 'tfn_poll' ) throw new Exception( "Invalid poll_id '$poll_id'", 400 );
+    if ( empty( $poll ) || $poll->post_type !== 'poll' ) throw new Exception( "Invalid poll_id '$data->poll_id'", 400 );
 
-    $options_string = get_metadata( 'post', $poll_id, 'options', true ) ?? '';
+    $options_string = get_metadata( 'post', $data->poll_id, 'options', true ) ?? '';
     $options = explode( "\n", $options_string );
     $options = array_map( function( $option ) {
       return trim( $option );
     }, $options );
 
-    if ( !in_array( $vote, $options ) ) throw new Exception( "Invalid vote '$vote'", 400 );
+    if ( isset( $_GET['debug'] ) ) {
+      $response['valid_options'] = $options;
+    }
+
+    if ( !in_array( $data->vote, $options ) ) throw new Exception( "Invalid vote '$data->vote'", 400 );
 
     $vote_sql = $wpdb->prepare( "
       INSERT INTO {$wpdb->prefix}tfn_poll_votes (poll_id, fingerprint, ip_address, vote, vote_date)
       VALUES (%d, %s, %s, %s, %s)
       ON DUPLICATE KEY UPDATE vote = %s
-    ", $poll_id, $cookie, $ip_address, $vote, $vote_date, $vote );
+    ", $data->poll_id, $data->fingerprint, $data->ip_address, $data->vote, $vote_date, $data->vote );
+
+    if ( isset( $_GET['debug'] ) ) {
+      $response['insert_sql'] = $vote_sql;
+    }
 
     $wpdb->query( $vote_sql );
     $error = $wpdb->last_error;
 
     if ( !empty( $error ) ) throw new Exception( "Could not place vote: $error ", 500 );
 
-    $votes = get_vote_count( $poll_id );
+    $votes = get_vote_count( $data->poll_id );
 
     foreach ( $options as $option ) {
       $found = array_search_key_value( $votes, 'option', $option );
@@ -70,18 +80,21 @@ function place_poll_vote_callback() {
       }
     }
 
-    update_metadata( 'post', $poll_id, 'votes', json_encode($votes) );
+    update_metadata( 'post', $data->poll_id, 'votes', json_encode($votes) );
 
-    $response['message'] = 'Vote place successfully';
+    $response['message'] = 'Vote placed successfully';
     $response['votes'] = $votes;
+
+    $pollStatus = $poll->post_status;
+    wp_transition_post_status( $pollStatus, $pollStatus, $poll );
+
   } catch (Exception $ex) {
     $response['error'] = $ex->getMessage();
-    $response_code = $ex->getCode() > 0 ? $ex->getCode() : 500;
-    http_response_code( $response_code );
+    // $response_code = $ex->getCode() > 0 ? $ex->getCode() : 500;
+    // http_response_code( $response_code );
   }
 
   if ( isset( $_GET['debug'] ) ) {
-    $response['cookie'] = get_or_create_cookie();
     $response['server'] = $_SERVER;
     $response['post'] = $_POST;
   }
@@ -92,26 +105,15 @@ function place_poll_vote_callback() {
 
 add_action( 'wp_ajax_nopriv_place_poll_vote', 'place_poll_vote_callback' );
 
-function get_or_create_cookie() {
-  $cookie = $_COOKIE['__cf__'];
-
-  if ( empty( $cookie ) ) {
-    $random_bytes = openssl_random_pseudo_bytes( 32 );
-    $cookie = bin2hex( $random_bytes );
-    $expiry = time() * 3600 * 24 * 28;
-    setcookie( '__cf__', $cookie, $expiry, '/' );
-  }
-
-  return $cookie;
-}
-
 function get_vote_count( $poll_id ) {
   global $wpdb;
+
+  //TODO: Need to stuff this with options that have no votes
 
   $sql = $wpdb->prepare( "
     SELECT
       vote AS `option`,
-      COUNT(vote) AS votes
+      SUM(vote_weight) AS votes
     FROM {$wpdb->prefix}tfn_poll_votes
     WHERE poll_id = %d
     GROUP BY vote

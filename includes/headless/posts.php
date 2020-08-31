@@ -1,59 +1,58 @@
 <?php
 
-function handle_request() {
-  if ( is_admin() || $_SERVER['SCRIPT_URL'] === '/wp-login.php' || strpos( $_SERVER['SCRIPT_URL'], 'wp-json' ) !== false ) return;
-  header('content-type: application/json');
+function test() {
+  echo "it works";
+}
 
-  $response = [ 'status' => 'Nothing to see here' ];
+function handle_posts() {
+  //TODO: Load these from WordPress options
+  $post_meta_fields = [
+    'path' => null,
+    'premium' => 'boolval',
+    'feature_on_home_page' => 'boolval',
+    'disable_comment_voting' => 'boolval',
+    'featured_image' => null,
+    'question' => null,
+    'start_date' => null,
+    'end_date' => null,
+    'options' => null,
+    'option_colours' => null,
+    'votes' => 'json_decode'
+  ];
+  $author_meta_fields = [
+    'description' => null,
+    'organisation' => null,
+    'job_title' => null
+  ];
 
-  try {
-    //TODO: Load these from WordPress options
-    $post_meta_fields = [
-      'premium' => 'boolval',
-      // 'blocks' => 'json_decode', //Removed as we are moving away from parsing blocks
-      'start_date' => null,
-      'end_date' => null,
-      'options' => null,
-      'votes' => 'json_decode'
-    ];
-    $author_meta_fields = [
-      'description' => null
-    ];
+  $params = get_params( $_GET );
+  $query = get_query( $params, $post_meta_fields, $author_meta_fields );
+  $count_query = get_count_query( $params );
+  $results = get_results( $query, $post_meta_fields, $author_meta_fields );
+  $count = get_count( $count_query );
+  $pagination = get_pagination( $params['page'], $params['page_size'], $count, $_SERVER['REDIRECT_SCRIPT_URI'], $_GET );
+  $response = [
+    'pagination' => $pagination,
+    'results' => $results
+  ];
 
-    $params = get_params( $_GET );
-    $query = get_query( $params, $post_meta_fields, $author_meta_fields );
-    $count_query = get_count_query( $params );
-    $results = get_results( $query, $post_meta_fields, $author_meta_fields );
-    $count = get_count( $count_query );
-    $pagination = get_pagination( $params['page'], $params['page_size'], $count, $_SERVER['REDIRECT_SCRIPT_URI'], $_GET );
-    $response = [
-      'pagination' => $pagination,
-      'results' => $results
-    ];
-
-    if ( isset( $_GET['debug'] ) ) {
-      $response['params'] = $params;
-      $response['query'] = $query;
-      $response['count_query'] = $count_query;
-      $response['server'] = $_SERVER;
-    }
-
-  } catch(Exception $ex) {
-    http_response_code( 500 );
-    $response = [ 'error' => $ex->getMessage() ];
+  if ( isset( $_GET['debug'] ) ) {
+    $response['params'] = $params;
+    $response['query'] = $query;
+    $response['count_query'] = $count_query;
+    $response['server'] = $_SERVER;
   }
 
-  $json = json_encode( $response );
-  echo $json;
-  exit();
+  return $response;
 }
-add_action( 'init', 'handle_request' );
 
 function get_params( $input ) {
+  $defaultStatuses = array( 'publish', 'draft', 'future', 'pending', 'private' );
+
   $params = [
     'page' => isset( $input['page'] ) ? intval( $input['page'] ) ?? 1 : 1,
     'page_size' => isset( $input['page_size'] ) ? intval( $input['page_size'] ) ?? 10 : 10,
-    'status' => isset( $input['status'] ) ? arrayify( $input['status'] ) ?? array( 'publish' ) : array( 'publish' ),
+    'status' => isset( $input['status'] ) ? arrayify( $input['status'] ) ?? $defaultStatuses : $defaultStatuses,
     'id' => isset( $input['id'] ) ? arrayify( $input['id'] ) ?? array() : array(),
     'author' => isset( $input['author'] ) ? arrayify( $input['author'] ) ?? array() : array(),
     'post_type' => isset( $input['post_type'] ) ? arrayify( $input['post_type'] ) ?? array() : array(),
@@ -98,7 +97,7 @@ function get_query( $params, $post_meta_fields, $author_meta_fields ) {
   $field_map = [
     'status' => 'p.post_status',
     'id' => 'p.ID',
-    'author' => 'u.ID',
+    'author' => 'p.post_author',
     'post_type' => 'p.post_type'
   ];
   foreach ( $field_map as $param => $field ) {
@@ -156,12 +155,14 @@ SELECT
             'author', c.comment_author,
             'email', c.comment_author_email,
             'date', UNIX_TIMESTAMP(c.comment_date_gmt) * 1000,
-            'content', c.comment_content
+            'content', c.comment_content,
+            'karma', c.comment_karma,
+            'approved', c.comment_approved
           )
         )
       END
     FROM {$wpdb->prefix}comments c
-    WHERE c.comment_post_ID = p.ID AND c.comment_approved = 1
+    WHERE c.comment_post_ID = p.ID
   ) AS comments,
   (
     SELECT
@@ -251,6 +252,11 @@ function get_results( $sql, $post_meta_fields, $author_meta_fields ) {
     $result->permalink = get_permalink( $result->post_id );
 
     foreach ( $post_meta_fields as $field => $method ) {
+      if ( $method === 'boolval' ) {
+        $result->post_meta->$field = boolval($result->post_meta->$field ?? false);
+        continue;
+      }
+
       if ( $method == null || empty( $result->post_meta->$field ) ) continue;
       try {
         $result->post_meta->$field = $method( $result->post_meta->$field );
@@ -266,56 +272,4 @@ function get_results( $sql, $post_meta_fields, $author_meta_fields ) {
   }
 
   return $results;
-}
-
-function get_count( $sql ) {
-  global $wpdb;
-
-  $results = $wpdb->get_results( $sql );
-
-  return intval($results[0]->total);
-}
-
-function get_pagination( $current_page, $page_size, $total_results, $base_url, $params ) {
-  $total_pages = ceil( $total_results / $page_size );
-
-  $pagination = [
-    'current_page' => $current_page,
-    'page_size' => $page_size,
-    'total_results' => $total_results,
-    'total_pages' => $total_pages,
-  ];
-
-  if ( $current_page < $total_pages ) {
-    $params['page'] = $current_page + 1;
-    $new_query = http_build_query( $params );
-    $pagination['next_page'] = "$base_url?$new_query";
-  }
-
-  if ( $current_page > 1 ) {
-    $params['page'] = $current_page - 1;
-    $new_query = http_build_query( $params );
-    $pagination['prev_page'] = "$base_url?$new_query";
-  }
-
-  return $pagination;
-}
-
-function arrayify( $val ) {
-  if ( empty( $val ) ) return null;
-  if ( is_array( $val ) ) return $val;
-  return array( $val );
-}
-
-function array_to_sql_in( $arr, $field ) {
-  if ( !is_array( $arr ) ) return null;
-  array_filter( $arr );
-  if ( empty( $arr ) ) return null;
-
-  array_walk( $arr, function( &$value, $key ) {
-    $value = "'" . esc_sql( $value ) . "'";
-  } );
-  $values = implode( $arr, ', ' );
-
-  return "$field IN ($values)";
 }
