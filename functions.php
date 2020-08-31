@@ -66,6 +66,14 @@ function status_transition_update_index( $new_status, $old_status, $post ) {
   $validPostTypes = [ "feature", "list", "news", "opinion", "poll", "post", "page" ];
   if ( in_array( $new_status, $validStatuses ) && isset( $post->post_content ) && in_array( $post->post_type, $validPostTypes ) ) {
     $post_id = $post->ID;
+    $featured_image_id = get_post_thumbnail_id($post);
+    if ($featured_image_id) {
+      $featured_image_url = wp_get_attachment_url($featured_image_id);
+      if ($featured_image_url) {
+        update_metadata('post', $post_id, 'featured_image', $featured_image_url);
+      }
+    }
+
     debug_log( "#### RE-INDEXING POST '$post_id'" );
     $url = INDEXER_PREFIX . "/index-wordpress-post?site=cms.tfn.scot&id=$post_id";
     try {
@@ -181,13 +189,13 @@ add_filter( 'image_make_intermediate_size', function( $file ) {
 
   switch( $size[1] ) {
     case( 400 ):
-      $named_size = 'small';
+      $named_size = '__small';
       break;
     case( 800 ):
-      $named_size = 'medium';
+      $named_size = '__medium';
       break;
     case( 1024 ):
-      $named_size = 'large';
+      $named_size = '__large';
       break;
   }
 
@@ -195,7 +203,7 @@ add_filter( 'image_make_intermediate_size', function( $file ) {
     return $file;
   }
 
-  $new_name = preg_replace( "/\d+x\d+$/", $named_size, $info['filename'] );
+  $new_name = preg_replace( "/-\d+x\d+$/", $named_size, $info['filename'] );
   $new_path = $info['dirname'] . '/' . $new_name . '.' . $info['extension'];
 
   $renamed = rename($file, $new_path);
