@@ -17,7 +17,15 @@ function handle_posts() {
     'end_date' => null,
     'options' => null,
     'option_colours' => null,
-    'votes' => 'json_decode'
+    'votes' => 'json_decode',
+    'ad_link' => null,
+    'alt_text' => null,
+    'text_version' => null,
+    'show_on' => null,
+    'mobile_image' => 'get_media_url',
+    'desktop_image' => 'get_media_url',
+    'prominence' => null,
+    'expires_on' => null
   ];
   $author_meta_fields = [
     'description' => null,
@@ -47,7 +55,7 @@ function handle_posts() {
 }
 
 function get_params( $input ) {
-  $defaultStatuses = array( 'publish', 'draft', 'future', 'pending', 'private' );
+  $defaultStatuses = array( 'publish', 'draft', 'future', 'pending', 'private', 'trash' );
 
   $params = [
     'page' => isset( $input['page'] ) ? intval( $input['page'] ) ?? 1 : 1,
@@ -272,4 +280,12 @@ function get_results( $sql, $post_meta_fields, $author_meta_fields ) {
   }
 
   return $results;
+}
+
+function get_media_url( $id ) {
+  if ( empty( $id ) ) {
+    return null;
+  }
+  $url = wp_get_attachment_url( $id );
+  return $url;
 }

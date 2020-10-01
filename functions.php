@@ -63,7 +63,7 @@ function curlArgs( $r, $url ) {
 
 function status_transition_update_index( $new_status, $old_status, $post ) {
   $validStatuses = [ "publish", "pending", "future", "private", "trash" ];
-  $validPostTypes = [ "feature", "list", "news", "opinion", "poll", "post", "page" ];
+  $validPostTypes = [ "feature", "list", "news", "opinion", "poll", "post", "page", "advertisement" ];
   if ( in_array( $new_status, $validStatuses ) && isset( $post->post_content ) && in_array( $post->post_type, $validPostTypes ) ) {
     $post_id = $post->ID;
     $featured_image_id = get_post_thumbnail_id($post);
