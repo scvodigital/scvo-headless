@@ -179,6 +179,11 @@ add_filter( 'wp_get_attachment_url', function ( $url ) {
 
 //** */
 
+add_filter( 'wp_generate_attachment_metadata', function( $metadata ) {
+  sleep(5);
+  return $metadata;
+});
+
 add_filter( 'image_make_intermediate_size', function( $file ) {
   $info = pathinfo( $file );
   preg_match( "/(\d+)(?:x\d+$)/", $info['filename'], $size );
@@ -214,7 +219,5 @@ add_filter( 'image_make_intermediate_size', function( $file ) {
 
   return $file;
 } );
-
-
 
 require_once get_parent_theme_file_path( 'includes/headless/headless.php' );
