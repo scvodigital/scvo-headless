@@ -25,7 +25,12 @@ function handle_posts() {
     'mobile_image' => 'get_media_url',
     'desktop_image' => 'get_media_url',
     'prominence' => null,
-    'expires_on' => null
+    'expires_on' => null,
+    'author_override_name' => null,
+    'author_override_job_title' => null,
+    'author_override_organisation' => null,
+    'author_override_image' => 'get_media_url',
+    'pdf_link' => null,
   ];
   $author_meta_fields = [
     'description' => null,

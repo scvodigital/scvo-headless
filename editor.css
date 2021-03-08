@@ -1,0 +1,22 @@
+.page-summary {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.block-editor .panel {
+  border: 1px solid #000000;
+  padding: 1rem;
+}
+
+.block-editor .panel .panel-header {
+  background-color: #ededed;
+}
+
+.block-editor .panel .panel-header .panel-title {
+  font-size: 1.4rem;
+}
+
+.block-editor .panel .panel-body {
+  border: 1px solid #cccccc;
+  padding: 1rem;
+}

@@ -10,7 +10,7 @@
  */
 
 define( "DEBUG_MODE", true );
-define( "REAL_HOST", 'https://dev.tfn.scot' );
+define( "REAL_HOST", 'https://tfn.scot' );
 define( "HOME_UPLOADS_PREFIX", 'http://cms.tfn.scot/wp-content/uploads/' );
 define( "CLOUD_UPLOADS_PREFIX", 'https://storage.googleapis.com/scvo-content/' );
 define( "INDEXER_PREFIX", 'https://internals.scvo.org/indexer' );
@@ -21,7 +21,8 @@ define( "POST_TYPE_BASE_MAP", [
   'list' => 'lists/',
   'feature' => 'features/',
   'post' => 'posts/',
-  'page' => '/'
+  'page' => '/',
+  'magazine_issue' => 'magazine/'
 ] );
 
 /**
@@ -62,8 +63,8 @@ function curlArgs( $r, $url ) {
  */
 
 function status_transition_update_index( $new_status, $old_status, $post ) {
-  $validStatuses = [ "publish", "pending", "future", "private", "trash" ];
-  $validPostTypes = [ "feature", "list", "news", "opinion", "poll", "post", "page", "advertisement" ];
+  $validStatuses = [ "publish", "pending", "future", "private", "trash", "draft" ];
+  $validPostTypes = [ "feature", "list", "news", "opinion", "poll", "post", "page", "advertisement", "magazine_issue" ];
   if ( in_array( $new_status, $validStatuses ) && isset( $post->post_content ) && in_array( $post->post_type, $validPostTypes ) ) {
     $post_id = $post->ID;
     $featured_image_id = get_post_thumbnail_id($post);
