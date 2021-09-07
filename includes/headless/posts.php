@@ -30,7 +30,7 @@ function handle_posts() {
     'author_override_job_title' => null,
     'author_override_organisation' => null,
     'author_override_image' => 'get_media_url',
-    'pdf_link' => null,
+    'pdf_id' => null,
   ];
   $author_meta_fields = [
     'description' => null,
